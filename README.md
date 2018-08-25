@@ -79,3 +79,23 @@ export default new Router({
 2018.08.25
 ### 1.轮播效果实现 swiper
  <a href="https://www.swiper.com.cn/api/start/new.html">Swiper官网</a>..
+### 2.返回到前一个页面
+```
+ <a href="javascript:" class="go_back" @click="$router.back()">
+ ```
+### 3.部分一级路由显示底部导航
+route中index.js添加meta元数据
+```
+ {
+      path: '/msite',
+      component: MSite,
+      meta:{
+        showFooter:true
+      }
+    },
+ ```
+ app.vue中用v-show控制显示
+ ```
+ <FooterGuide v-show="$route.meta.showFooter" />
+ ```
+
