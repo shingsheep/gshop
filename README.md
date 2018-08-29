@@ -29,7 +29,7 @@ npm test
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
-
+# 外卖app
 ## 笔记
 2018.08.21 <br/>
 ### 1.页面模块拆分
@@ -47,8 +47,10 @@ export default new Router({
     path:'/msite',
     component:Miste
     },
+    {
     path:'/'
     redirect:'/msite'
+    }
    ]
 })
 ```
@@ -98,4 +100,49 @@ route中index.js添加meta元数据
  ```
  <FooterGuide v-show="$route.meta.showFooter" />
  ```
+$router:路由器对象，包含一些操作路由的功能函数，来实现编程式导航（跳转路由）
+$route:当前路由对象， path/meta/query/params
 
+2018.8.29
+### 1.ajax请求函数封装
+```
+import axios from 'axios'
+export default function ajax (url, data={}, type='GET') {
+
+  //高阶函数，接收函数的函数
+  return new Promise(function (resolve, reject) {
+    // 执行异步ajax请求
+    let promise
+    if (type === 'GET') {
+      // 准备url query参数数据
+      let dataStr = '' //数据拼接字符串
+      Object.keys(data).forEach(key => {
+        dataStr += key + '=' + data[key] + '&'
+      })
+      if (dataStr !== '') {
+        dataStr = dataStr.substring(0, dataStr.lastIndexOf('&'))
+        url = url + '?' + dataStr
+      }
+      // 发送get请求
+      promise = axios.get(url)
+    } else {
+      // 发送post请求
+      promise = axios.post(url, data)
+    }
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response.data)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}
+
+```
+### 2.接口请求函数封装
+```
+export const reqPwdLogin = ({name, pwd, captcha}) => ajax(BASE_URL+'/login_pwd', {name, pwd, captcha}, 'POST')
+// 7、发送短信验证码
+export const reqSendCode = (phone) => ajax(BASE_URL+'/sendcode', {phone})
+```
